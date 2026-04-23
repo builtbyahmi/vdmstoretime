@@ -425,18 +425,19 @@ function exportToExcel() {
   const EST_WEEKDAY = '10:00 AM - 8:00 PM';
   const EST_SUNDAY  = '12:00 PM - 6:30 PM';
 
-  // Convert time string like "10:00 AM" by adding hours offset
+  // Convert a single time string adding offset, flagging next-day rollover
   function addHours(timeStr, hrs) {
     const [time, ampm] = timeStr.trim().split(' ');
     let [h, m] = time.split(':').map(Number);
     if (ampm === 'PM' && h !== 12) h += 12;
     if (ampm === 'AM' && h === 12) h = 0;
     h += hrs;
-    if (h >= 24) h -= 24;
+    const nextDay = h >= 24;
+    if (nextDay) h -= 24;
     const newAmpm = h >= 12 ? 'PM' : 'AM';
     const newH = h > 12 ? h - 12 : h === 0 ? 12 : h;
-    const newM = m === 0 ? '00' : m;
-    return `${newH}:${newM} ${newAmpm}`;
+    const newM = m === 0 ? '00' : String(m).padStart(2,'0');
+    return `${newH}:${newM} ${newAmpm}${nextDay ? ' (+1)' : ''}`;
   }
 
   function convertRange(rangeStr, hrs) {
@@ -444,8 +445,8 @@ function exportToExcel() {
     return addHours(parts[0], hrs) + ' - ' + addHours(parts[1], hrs);
   }
 
-  // CST +2hrs PKT offset | EST +3hrs PKT offset (as per your working offset)
-  const PKT = { CST: 2, EST: 3 };
+  // PKT (UTC+5): CST stores currently on CDT (UTC-5) → +10hrs | EST stores on EDT (UTC-4) → +9hrs
+  const PKT = { CST: 10, EST: 9 };
 
   // Build rows
   const rows = STORES.map(s => ({
