@@ -412,8 +412,16 @@ function exportToExcel() {
     'Store Phone Number',
     'District Manager',
     'VDM',
-    'Time Zone'   // corrected CST/EST based on state
+    'Time Zone',
+    'Mon-Sat Hours',
+    'Sunday Hours'
   ];
+
+  // Hours by timezone
+  const CST_WEEKDAY = '10:00 AM - 8:00 PM';
+  const CST_SUNDAY  = '12:00 PM - 6:00 PM';
+  const EST_WEEKDAY = '10:00 AM - 8:00 PM';
+  const EST_SUNDAY  = '12:00 PM - 6:30 PM';
 
   // Build rows
   const rows = STORES.map(s => ({
@@ -426,7 +434,9 @@ function exportToExcel() {
     'Store Phone Number': s['Store Phone Number'] || '',
     'District Manager':   s['District Manager'] || '',
     'VDM':                s['VDM'] || '',
-    'Time Zone':          s.tz  // auto-corrected: FL/GA=EST, rest=CST
+    'Time Zone':          s.tz,
+    'Mon-Sat Hours':      s.tz === 'EST' ? EST_WEEKDAY : CST_WEEKDAY,
+    'Sunday Hours':       s.tz === 'EST' ? EST_SUNDAY  : CST_SUNDAY
   }));
 
   // Create workbook
@@ -445,6 +455,8 @@ function exportToExcel() {
     { wch: 22 }, // District Manager
     { wch: 22 }, // VDM
     { wch: 12 }, // Time Zone
+    { wch: 22 }, // Mon-Sat Hours
+    { wch: 20 }, // Sunday Hours
   ];
 
   XLSX.utils.book_append_sheet(wb, ws, 'Stores');
