@@ -414,7 +414,9 @@ function exportToExcel() {
     'VDM',
     'Time Zone',
     'Mon-Sat Hours',
-    'Sunday Hours'
+    'Sunday Hours',
+    'PKT Mon-Sat',
+    'PKT Sunday'
   ];
 
   // Hours by timezone
@@ -422,6 +424,28 @@ function exportToExcel() {
   const CST_SUNDAY  = '12:00 PM - 6:00 PM';
   const EST_WEEKDAY = '10:00 AM - 8:00 PM';
   const EST_SUNDAY  = '12:00 PM - 6:30 PM';
+
+  // Convert time string like "10:00 AM" by adding hours offset
+  function addHours(timeStr, hrs) {
+    const [time, ampm] = timeStr.trim().split(' ');
+    let [h, m] = time.split(':').map(Number);
+    if (ampm === 'PM' && h !== 12) h += 12;
+    if (ampm === 'AM' && h === 12) h = 0;
+    h += hrs;
+    if (h >= 24) h -= 24;
+    const newAmpm = h >= 12 ? 'PM' : 'AM';
+    const newH = h > 12 ? h - 12 : h === 0 ? 12 : h;
+    const newM = m === 0 ? '00' : m;
+    return `${newH}:${newM} ${newAmpm}`;
+  }
+
+  function convertRange(rangeStr, hrs) {
+    const parts = rangeStr.split(' - ');
+    return addHours(parts[0], hrs) + ' - ' + addHours(parts[1], hrs);
+  }
+
+  // CST +2hrs PKT offset | EST +3hrs PKT offset (as per your working offset)
+  const PKT = { CST: 2, EST: 3 };
 
   // Build rows
   const rows = STORES.map(s => ({
@@ -436,7 +460,9 @@ function exportToExcel() {
     'VDM':                s['VDM'] || '',
     'Time Zone':          s.tz,
     'Mon-Sat Hours':      s.tz === 'EST' ? EST_WEEKDAY : CST_WEEKDAY,
-    'Sunday Hours':       s.tz === 'EST' ? EST_SUNDAY  : CST_SUNDAY
+    'Sunday Hours':       s.tz === 'EST' ? EST_SUNDAY  : CST_SUNDAY,
+    'PKT Mon-Sat':        convertRange(s.tz === 'EST' ? EST_WEEKDAY : CST_WEEKDAY, PKT[s.tz]),
+    'PKT Sunday':         convertRange(s.tz === 'EST' ? EST_SUNDAY  : CST_SUNDAY,  PKT[s.tz])
   }));
 
   // Create workbook
@@ -457,6 +483,8 @@ function exportToExcel() {
     { wch: 12 }, // Time Zone
     { wch: 22 }, // Mon-Sat Hours
     { wch: 20 }, // Sunday Hours
+    { wch: 22 }, // PKT Mon-Sat
+    { wch: 20 }, // PKT Sunday
   ];
 
   XLSX.utils.book_append_sheet(wb, ws, 'Stores');
