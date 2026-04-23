@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boost Mobile Store Directory | Vantedge</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#07080F;--bg2:#0D0F1A;--card:#12152A;--card2:#1A1E35;
+--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+--orange:#FF6B00;--orange2:#FF8C00;--purple:#7B2FBE;
+--est:#00B4D8;--cst:#F77F00;
+--text:#E8EAF6;--muted:#8892B0;--green:#00E676;--red:#FF5252;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#0D0F1A 0%,#1a0a2e 50%,#0D1117 100%);border-bottom:1px solid var(--border2);padding:0 24px;position:sticky;top:0;z-index:1000;backdrop-filter:blur(20px)}
+.header-inner{max-width:1600px;margin:0 auto;display:flex;align-items:center;gap:20px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--orange),var(--orange2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#fff}
+.logo-text{font-size:18px;font-weight:800;background:linear-gradient(90deg,var(--orange),var(--orange2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header-clocks{margin-left:auto;display:flex;gap:16px}
+.clock-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:6px 14px;display:flex;flex-direction:column;align-items:center}
+.clock-label{font-size:10px;font-weight:700;letter-spacing:1px;margin-bottom:2px}
+.clock-time{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+.clock-cst .clock-label{color:var(--cst)}
+.clock-est .clock-label{color:var(--est)}
+.nav-tabs{display:flex;gap:4px;margin-left:20px}
+.nav-tab{padding:6px 18px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;transition:.2s}
+.nav-tab.active{background:var(--orange);border-color:var(--orange);color:#fff}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,rgba(255,107,0,.15) 0%,rgba(123,47,190,.1) 100%);border-bottom:1px solid var(--border);padding:28px 24px}
+.hero-inner{max-width:1600px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.hero-title{font-size:28px;font-weight:900;background:linear-gradient(90deg,#fff 0%,var(--orange) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{color:var(--muted);font-size:14px;margin-top:4px}
+.stats{display:flex;gap:12px;flex-wrap:wrap}
+.stat{background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:12px 20px;text-align:center}
+.stat-num{font-size:22px;font-weight:800;color:var(--orange)}
+.stat-lbl{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.5px;margin-top:2px}
+
+/* SEARCH */
+.search-bar{max-width:1600px;margin:20px auto;padding:0 24px;display:flex;gap:10px;align-items:center}
+.search-input{flex:1;background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:10px 16px;color:var(--text);font-size:14px;outline:none;transition:.2s}
+.search-input:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,107,0,.15)}
+.filter-btn{padding:10px 16px;border-radius:10px;border:1px solid var(--border2);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;transition:.2s;white-space:nowrap}
+.filter-btn.active{background:var(--orange);border-color:var(--orange);color:#fff}
+
+/* TZ SECTION */
+.tz-section{max-width:1600px;margin:0 auto;padding:0 24px 40px}
+.tz-header{display:flex;align-items:center;gap:12px;margin:24px 0 16px;padding:14px 20px;border-radius:14px;border-left:4px solid}
+.tz-header.cst{background:linear-gradient(90deg,rgba(247,127,0,.12),transparent);border-color:var(--cst-color,var(--cst))}
+.tz-header.est{background:linear-gradient(90deg,rgba(0,180,216,.12),transparent);border-color:var(--est)}
+.tz-badge{padding:4px 14px;border-radius:20px;font-size:12px;font-weight:800;letter-spacing:1px}
+.tz-badge.cst{background:rgba(247,127,0,.2);color:var(--cst);border:1px solid var(--cst)}
+.tz-badge.est{background:rgba(0,180,216,.2);color:var(--est);border:1px solid var(--est)}
+.tz-title{font-size:18px;font-weight:800}
+.tz-hours{font-size:12px;color:var(--muted);margin-left:auto}
+
+/* VDM SECTION */
+.vdm-section{margin-bottom:24px}
+.vdm-header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card2);border:1px solid var(--border2);border-radius:12px 12px 0 0;cursor:pointer;transition:.2s}
+.vdm-header:hover{border-color:var(--orange);background:rgba(255,107,0,.08)}
+.vdm-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--orange),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex-shrink:0}
+.vdm-name{font-size:15px;font-weight:700}
+.vdm-count{font-size:12px;color:var(--muted)}
+.vdm-chevron{margin-left:auto;font-size:16px;transition:.3s;color:var(--muted)}
+.vdm-stores{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;padding:12px;background:var(--bg2);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px}
+
+/* STORE CARD */
+.store-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;transition:.25s;position:relative;overflow:hidden}
+.store-card:hover{border-color:var(--orange);transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,107,0,.15)}
+.store-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--orange),var(--orange2))}
+.store-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px}
+.door-id{font-size:11px;font-weight:800;color:var(--orange);letter-spacing:.5px;background:rgba(255,107,0,.1);padding:3px 8px;border-radius:6px;border:1px solid rgba(255,107,0,.2)}
+.door-status{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px}
+.door-status.open{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.2)}
+.door-status.closed{background:rgba(255,82,82,.1);color:var(--red);border:1px solid rgba(255,82,82,.2)}
+.store-address{font-size:14px;font-weight:600;margin-bottom:4px;line-height:1.4}
+.store-city{font-size:12px;color:var(--muted);margin-bottom:10px}
+.store-meta{display:flex;flex-direction:column;gap:5px}
+.meta-row{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.meta-row span:first-child{font-size:13px}
+.meta-val{color:var(--text);font-weight:500}
+.dm-tag{margin-top:8px;padding:6px 10px;background:rgba(123,47,190,.1);border:1px solid rgba(123,47,190,.2);border-radius:8px;font-size:11px;color:#B39DDB;font-weight:600}
+
+/* MAP VIEW */
+#map-view{display:none;height:calc(100vh - 64px);flex-direction:column}
+#map-view.active{display:flex}
+#map-container{flex:1;position:relative}
+#map{height:100%;width:100%}
+.map-sidebar{position:absolute;top:16px;right:16px;width:300px;background:rgba(13,15,26,.95);backdrop-filter:blur(20px);border:1px solid var(--border2);border-radius:16px;padding:16px;z-index:1000;max-height:calc(100vh-120px);overflow-y:auto}
+.map-sidebar-title{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--orange)}
+.map-store-item{padding:10px;border-radius:8px;border:1px solid var(--border);margin-bottom:8px;cursor:pointer;transition:.2s;font-size:12px}
+.map-store-item:hover{border-color:var(--orange);background:rgba(255,107,0,.08)}
+.map-store-item .msaddr{font-weight:600;color:var(--text)}
+.map-store-item .mscity{color:var(--muted);font-size:11px}
+
+/* HIDDEN */
+.list-view{display:block}
+.list-view.hidden{display:none}
+.collapsed .vdm-stores{display:none}
+.collapsed .vdm-chevron{transform:rotate(-90deg)}
+
+@media(max-width:768px){
+.hero-inner{flex-direction:column;align-items:flex-start}
+.header-inner{flex-wrap:wrap;height:auto;padding:10px 0;gap:8px}
+.header-clocks{margin-left:0;width:100%;justify-content:space-between}
+.nav-tabs{width:100%}
+.nav-tab{flex:1;text-align:center}
+.vdm-stores{grid-template-columns:1fr}
+.map-sidebar{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <div class="logo-icon">B</div>
+      <span class="logo-text">Boost Mobile Directory</span>
+    </a>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showView('list')">📋 Directory</button>
+      <button class="nav-tab" onclick="showView('map')">🗺️ Map View</button>
+    </div>
+    <div class="header-clocks">
+      <div class="clock-box clock-cst">
+        <span class="clock-label">CST</span>
+        <span class="clock-time" id="cst-clock">--:-- --</span>
+      </div>
+      <div class="clock-box clock-est">
+        <span class="clock-label">EST</span>
+        <span class="clock-time" id="est-clock">--:-- --</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="list-view" id="list-view">
+  <div class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-title">Boost Mobile Store Directory</div>
+        <div class="hero-sub">Organized by VDM · Auto timezone by state · Live store hours</div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="stat-num" id="total-count">53</div><div class="stat-lbl">TOTAL STORES</div></div>
+        <div class="stat"><div class="stat-num" style="color:var(--cst)" id="cst-count">--</div><div class="stat-lbl">CST STORES</div></div>
+        <div class="stat"><div class="stat-num" style="color:var(--est)" id="est-count">--</div><div class="stat-lbl">EST STORES</div></div>
+        <div class="stat"><div class="stat-num">10</div><div class="stat-lbl">VDMs</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="search-bar">
+    <input class="search-input" type="text" id="search" placeholder="🔍  Search by address, city, VDM, DM, Door ID..." oninput="filterStores()">
+    <button class="filter-btn active" id="btn-all" onclick="setFilter('all')">All</button>
+    <button class="filter-btn" id="btn-cst" onclick="setFilter('CST')" style="color:var(--cst);border-color:var(--cst)">CST</button>
+    <button class="filter-btn" id="btn-est" onclick="setFilter('est')" style="color:var(--est);border-color:var(--est)">EST</button>
+  </div>
+
+  <div class="tz-section" id="directory"></div>
+</div>
+
+<div id="map-view">
+  <div id="map-container">
+    <div id="map"></div>
+    <div class="map-sidebar">
+      <div class="map-sidebar-title">📍 All Stores</div>
+      <div id="map-list"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORES = [{"Door Status": "Open", "Store Address": "1332 S Plano Rd #630", "Door ID": "1476", "City": "Richardson", "State": "TX", "Zip": "75081", "Store Phone Number": "(214) 377-8901", "District Manager": "Islam, Shujhon", "VDM": "Haseeb Waheed", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "1336 N Galloway", "Door ID": "1181", "City": "Mesquite", "State": "TX", "Zip": "75149", "Store Phone Number": "(469) 250-7152", "District Manager": "Islam, Shujhon", "VDM": "Haseeb Waheed", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "13505 Montfort Pl", "Door ID": "1184", "City": "Dallas", "State": "TX", "Zip": "75240", "Store Phone Number": "(214) 258-5899", "District Manager": "Islam, Shujhon", "VDM": "Haseeb Waheed", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "2918 Beltline Rd", "Door ID": "1180", "City": "Irving", "State": "TX", "Zip": "75062", "Store Phone Number": "(972) 600-9292", "District Manager": "Islam, Shujhon", "VDM": "Haseeb Waheed", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "909 E Irving Blvd", "Door ID": "1326", "City": "Irving", "State": "TX", "Zip": "75060", "Store Phone Number": "(469) 276-7430", "District Manager": "Islam, Shujhon", "VDM": "Haseeb Waheed", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "1107 A Mulberry St", "Door ID": "1030", "City": "Kaufman", "State": "TX", "Zip": "75142", "Store Phone Number": "(469) 376-1509", "District Manager": "Rosales, Steven", "VDM": "Ahmed Ali", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "1372 N Mockingbird Ln", "Door ID": "1017", "City": "Abilene", "State": "TX", "Zip": "79603", "Store Phone Number": "(325) 704-5513", "District Manager": "Rosales, Steven", "VDM": "Ahmed Ali", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "2719 South Buckner Blvd", "Door ID": "1171", "City": "Dallas", "State": "TX", "Zip": "75227", "Store Phone Number": "(469) 862-3098", "District Manager": "Rosales, Steven", "VDM": "Ahmed Ali", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "3117 S 14th St", "Door ID": "1018", "City": "Abilene", "State": "TX", "Zip": "79605", "Store Phone Number": "(325) 232-7959", "District Manager": "Rosales, Steven", "VDM": "Ahmed Ali", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "2213 Lone Tree Rd", "Door ID": "1417", "City": "Victoria", "State": "TX", "Zip": "77901", "Store Phone Number": "(361) 894-6414", "District Manager": "Coronado, Mayra", "VDM": "Tauseef Ahmed", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "3218 S Port AVE", "Door ID": "1221", "City": "Corpus Christi", "State": "TX", "Zip": "78415", "Store Phone Number": "(361) 444-6411", "District Manager": "Coronado, Mayra", "VDM": "Tauseef Ahmed", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "4037 Ayers St.", "Door ID": "4037", "City": "Corpus Christi", "State": "TX", "Zip": "78415", "Store Phone Number": "(361) 806-0599", "District Manager": "Coronado, Mayra", "VDM": "Tauseef Ahmed", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "5634 Weber Rd", "Door ID": "1225", "City": "Corpus Christi", "State": "TX", "Zip": "78411", "Store Phone Number": "(361) 371-5511", "District Manager": "Coronado, Mayra", "VDM": "Tauseef Ahmed", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "700 S 14th St Suite D", "Door ID": "1224", "City": "Kingsville", "State": "TX", "Zip": "78363", "Store Phone Number": "(361) 221-9760", "District Manager": "Coronado, Mayra", "VDM": "Tauseef Ahmed", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "20 Phillips Dr Unit 10", "Door ID": "1415", "City": "Midfield", "State": "AL", "Zip": "35228", "Store Phone Number": "(205) 783-5544", "District Manager": "Cobb, Crystal", "VDM": "Ezzat Fatima", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "2120 Cogswell Ave", "Door ID": "1397", "City": "Pell City", "State": "AL", "Zip": "35125", "Store Phone Number": "(205) 338-7606", "District Manager": "Cobb, Crystal", "VDM": "Ezzat Fatima", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "3133 Lorna Rd", "Door ID": "1414", "City": "Vestavia Hills", "State": "AL", "Zip": "35216", "Store Phone Number": "(205) 783-1669", "District Manager": "Cobb, Crystal", "VDM": "Ezzat Fatima", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "2457 MLK Jr Dr", "Door ID": "1418", "City": "Atlanta", "State": "GA", "Zip": "30311", "Store Phone Number": "(404) 228-6845", "District Manager": "De Monbrun, Aaron", "VDM": "Ezzat Fatima", "Time Zone": "EST", "tz": "EST"}, {"Door Status": "Open", "Store Address": "2805 University Dr NW", "Door ID": "1405", "City": "Huntsville", "State": "AL", "Zip": "35816", "Store Phone Number": "(256) 429-9224", "District Manager": "Sneed, Jamesmeice", "VDM": "Ezzat Fatima", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "519 Avalon Ave", "Door ID": "1406", "City": "Muscle Shoals", "State": "AL", "Zip": "35661", "Store Phone Number": "(256) 248-4567", "District Manager": "Sneed, Jamesmeice", "VDM": "Ezzat Fatima", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "18524 NW 67th Ave", "Door ID": "1430", "City": "Hialeah", "State": "FL", "Zip": "33015", "Store Phone Number": "(305) 821-7900", "District Manager": "Aroca, Ulysses Joel", "VDM": "Abdul Rehman", "Time Zone": "EST", "tz": "EST"}, {"Door Status": "Open", "Store Address": "21339 NW 2nd Ave", "Door ID": "1474", "City": "Miami Gardens", "State": "FL", "Zip": "33169", "Store Phone Number": "(305) 974-5895", "District Manager": "Aroca, Ulysses Joel", "VDM": "Abdul Rehman", "Time Zone": "EST", "tz": "EST"}, {"Door Status": "Open", "Store Address": "6763 W Flagler St", "Door ID": "1454", "City": "Miami", "State": "FL", "Zip": "33144", "Store Phone Number": "(786) 332-2249", "District Manager": "Aroca, Ulysses Joel", "VDM": "Abdul Rehman", "Time Zone": "EST", "tz": "EST"}, {"Door Status": "Open", "Store Address": "3976 Lake Worth Rd", "Door ID": "1458", "City": "Lake Worth", "State": "FL", "Zip": "33461", "Store Phone Number": "(561) 406-9132", "District Manager": "Castano, Sebastian", "VDM": "Abdul Rehman", "Time Zone": "EST", "tz": "EST"}, {"Door Status": "Open", "Store Address": "5891 S Military Trl Ste A-5", "Door ID": "1444", "City": "Lake Worth", "State": "FL", "Zip": "33463", "Store Phone Number": "(561) 623-7273", "District Manager": "Castano, Sebastian", "VDM": "Abdul Rehman", "Time Zone": "EST", "tz": "EST"}, {"Door Status": "Open", "Store Address": "305 N Main St", "Door ID": "1242", "City": "Belle Glade", "State": "FL", "Zip": "33430", "Store Phone Number": "(561) 983-8273", "District Manager": "Khan, Mohammed Zubair", "VDM": "Abdul Rehman", "Time Zone": "EST", "tz": "EST"}, {"Door Status": "Open", "Store Address": "530 E Sugarland Hwy", "Door ID": "1238", "City": "Clewiston", "State": "FL", "Zip": "33440", "Store Phone Number": "(863) 223-2240", "District Manager": "Khan, Mohammed Zubair", "VDM": "Abdul Rehman", "Time Zone": "EST", "tz": "EST"}, {"Door Status": "Open", "Store Address": "2014 Pleasanton Rd.", "Door ID": "1403", "City": "San Antonio", "State": "TX", "Zip": "78221", "Store Phone Number": "(210) 957-1233", "District Manager": "Aguinaga, Elisha Marie", "VDM": "Farnaz Hyder", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "2119 Culebra Rd", "Door ID": "1477", "City": "San Antonio", "State": "TX", "Zip": "78228", "Store Phone Number": "(210) 236-5346", "District Manager": "Aguinaga, Elisha Marie", "VDM": "Farnaz Hyder", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "238 SW Military Dr, Ste 105", "Door ID": "1186", "City": "San Antonio", "State": "TX", "Zip": "78221", "Store Phone Number": "(210) 924-1527", "District Manager": "Aguinaga, Elisha Marie", "VDM": "Farnaz Hyder", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "2902 Goliad Rd", "Door ID": "1340", "City": "San Antonio", "State": "TX", "Zip": "78223", "Store Phone Number": "(210) 907-5663", "District Manager": "Aguinaga, Elisha Marie", "VDM": "Farnaz Hyder", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "8244 Marbach", "Door ID": "1332", "City": "San Antonio", "State": "TX", "Zip": "78227", "Store Phone Number": "(210) 290-9214", "District Manager": "Baig, Salman", "VDM": "Farnaz Hyder", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "1139 SE Military", "Door ID": "1105", "City": "San Antonio", "State": "TX", "Zip": "78214", "Store Phone Number": "(210) 277-0225", "District Manager": "Shaheryer, Marwan", "VDM": "Farnaz Hyder", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "930 SW Military Dr", "Door ID": "1337", "City": "San Antonio", "State": "TX", "Zip": "78221", "Store Phone Number": "(210) 263-9110", "District Manager": "Shaheryer, Marwan", "VDM": "Farnaz Hyder", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "521 College Ave", "Door ID": "1345", "City": "South Houston", "State": "TX", "Zip": "77587", "Store Phone Number": "(346) 571-7257", "District Manager": "Chairez, Juan", "VDM": "Sadia Bibi", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "10806 S Post Oak Rd # 200", "Door ID": "1427", "City": "Houston", "State": "TX", "Zip": "77035", "Store Phone Number": "(346) 571-6993", "District Manager": "Lalani, Jamil", "VDM": "Sadia Bibi", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "12825 South Post Oak Rd", "Door ID": "1027", "City": "Houston", "State": "TX", "Zip": "77045", "Store Phone Number": "(281) 501-2459", "District Manager": "Lalani, Jamil", "VDM": "Sadia Bibi", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "5417 Anderson Rd", "Door ID": "1442", "City": "Houston", "State": "TX", "Zip": "77053", "Store Phone Number": "(832) 538-1674", "District Manager": "Murphy, Ashley", "VDM": "Sadia Bibi", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "6890 Monroe Rd", "Door ID": "1409", "City": "Houston", "State": "TX", "Zip": "77017", "Store Phone Number": "(713) 944-3100", "District Manager": "Murphy, Ashley", "VDM": "Sadia Bibi", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "8138 Kirby Dr", "Door ID": "1344", "City": "Houston", "State": "TX", "Zip": "77054", "Store Phone Number": "(346) 571-7256", "District Manager": "Murphy, Ashley", "VDM": "Sadia Bibi", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "1700 University Blvd.", "Door ID": "1098", "City": "Jackson", "State": "MS", "Zip": "39204", "Store Phone Number": "(769) 524-7803", "District Manager": "Butt, Sarah", "VDM": "Muhammad Ahmed", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "4329 N. State St.", "Door ID": "1107", "City": "Jackson", "State": "MS", "Zip": "39206", "Store Phone Number": "(601) 487-6086", "District Manager": "Butt, Sarah", "VDM": "Muhammad Ahmed", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "6333 U S Highway 49 Ste 20", "Door ID": "1096", "City": "Hattiesburg", "State": "MS", "Zip": "39401", "Store Phone Number": "(601) 255-5908", "District Manager": "Butt, Sarah", "VDM": "Muhammad Ahmed", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "933 Ellis Ave", "Door ID": "1103", "City": "Jackson", "State": "MS", "Zip": "39209", "Store Phone Number": "(601) 397-6623", "District Manager": "Butt, Sarah", "VDM": "Muhammad Ahmed", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "2708 Southwest Pkwy Ste 168B", "Door ID": "1031", "City": "Wichita Falls", "State": "TX", "Zip": "76308", "Store Phone Number": "(940) 228-5116", "District Manager": "Rosales, Steven", "VDM": "Tariq Abdullah", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "3940 St Francis Ave. Ste. 111", "Door ID": "1020", "City": "Dallas", "State": "TX", "Zip": "75228", "Store Phone Number": "(214) 238-6646", "District Manager": "Rosales, Steven", "VDM": "Ahmed Ali", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "13719 Tomball Pkwy", "Door ID": "1396", "City": "Houston", "State": "TX", "Zip": "77086", "Store Phone Number": "(346) 571-7099", "District Manager": "Tanvir, Muhammad Umer", "VDM": "Hammad", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "3118 E Crosstimbers St", "Door ID": "1399", "City": "Houston", "State": "TX", "Zip": "77093", "Store Phone Number": "(346) 240-3825", "District Manager": "Tanvir, Muhammad Umer", "VDM": "Hammad", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "5722 Antoine Dr", "Door ID": "1322", "City": "Houston", "State": "TX", "Zip": "77091", "Store Phone Number": "(832) 433-7426", "District Manager": "Tanvir, Muhammad Umer", "VDM": "Hammad", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "608 W Mount Houston Rd", "Door ID": "1424", "City": "Houston", "State": "TX", "Zip": "77037", "Store Phone Number": "(832) 850-7835", "District Manager": "Tanvir, Muhammad Umer", "VDM": "Hammad", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "12850 Aldine Westfield Rd", "Door ID": "1496", "City": "Houston", "State": "TX", "Zip": "77039", "Store Phone Number": "281-741-5532", "District Manager": "Tanvir, Muhammad Umer", "VDM": "Hammad", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "3103 FM 1960 W", "Door ID": "1490", "City": "Humble", "State": "TX", "Zip": "77338", "Store Phone Number": "281-209-9100", "District Manager": "Tanvir, Muhammad Umer", "VDM": "Hammad", "Time Zone": "CST", "tz": "CST"}, {"Door Status": "Open", "Store Address": "4205 Little York Rd", "Door ID": "1488", "City": "Houston", "State": "TX", "Zip": "77093", "Store Phone Number": "281-741-3095", "District Manager": "Tanvir, Muhammad Umer", "VDM": "Hammad", "Time Zone": "CST", "tz": "CST"}];
+
+// Assign timezone
+const EST_STATES = ['GA','FL'];
+STORES.forEach(s => {
+  s.tz = EST_STATES.includes(s.State) ? 'EST' : 'CST';
+  s.hours = s.tz === 'EST'
+    ? 'Mon–Sat: 10:00 AM – 8:00 PM | Sun: 12:00 PM – 6:30 PM'
+    : 'Mon–Sat: 10:00 AM – 8:00 PM | Sun: 12:00 PM – 6:00 PM';
+});
+
+// Clocks
+function updateClocks() {
+  const now = new Date();
+  const cst = new Date(now.toLocaleString('en-US',{timeZone:'America/Chicago'}));
+  const est = new Date(now.toLocaleString('en-US',{timeZone:'America/New_York'}));
+  const fmt = d => d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('cst-clock').textContent = fmt(cst);
+  document.getElementById('est-clock').textContent = fmt(est);
+}
+setInterval(updateClocks,1000); updateClocks();
+
+// Stats
+const cstCount = STORES.filter(s=>s.tz==='CST').length;
+const estCount = STORES.filter(s=>s.tz==='EST').length;
+document.getElementById('cst-count').textContent = cstCount;
+document.getElementById('est-count').textContent = estCount;
+document.getElementById('total-count').textContent = STORES.length;
+
+// Group by VDM
+function groupByVDM(list) {
+  const map = {};
+  list.forEach(s => {
+    if (!map[s.VDM]) map[s.VDM] = [];
+    map[s.VDM].push(s);
+  });
+  return map;
+}
+
+function initials(name) {
+  return name.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2);
+}
+
+function storeCard(s) {
+  const st = s['Door Status']||'Open';
+  const stClass = st.toLowerCase()==='open'?'open':'closed';
+  return `<div class="store-card" onclick="focusMapStore(${s['Door ID']})">
+    <div class="store-top">
+      <span class="door-id">🚪 Door #${s['Door ID']}</span>
+      <span class="door-status ${stClass}">${st.toUpperCase()}</span>
+    </div>
+    <div class="store-address">📍 ${s['Store Address']}</div>
+    <div class="store-city">${s.City}, ${s.State} ${s.Zip}</div>
+    <div class="store-meta">
+      <div class="meta-row"><span>📞</span><span class="meta-val">${s['Store Phone Number']}</span></div>
+      <div class="meta-row"><span>🕐</span><span class="meta-val">${s.hours}</span></div>
+    </div>
+    <div class="dm-tag">👔 DM: ${s['District Manager']}</div>
+  </div>`;
+}
+
+let currentFilter = 'all';
+let currentSearch = '';
+
+function renderDirectory() {
+  const dir = document.getElementById('directory');
+  const query = currentSearch.toLowerCase();
+  const filtered = STORES.filter(s => {
+    const tzMatch = currentFilter === 'all' || s.tz.toLowerCase() === currentFilter.toLowerCase();
+    const searchMatch = !query || [s['Store Address'],s.City,s.State,s.Zip,s.VDM,s['District Manager'],s['Door ID'],s['Store Phone Number']].some(v=>(v||'').toLowerCase().includes(query));
+    return tzMatch && searchMatch;
+  });
+
+  // Group by VDM first
+  const vdmMap = groupByVDM(filtered);
+  let html = '';
+
+  Object.entries(vdmMap).forEach(([vdm, stores]) => {
+    const cstStores = stores.filter(s=>s.tz==='CST');
+    const estStores = stores.filter(s=>s.tz==='EST');
+    const hasBoth = cstStores.length > 0 && estStores.length > 0;
+
+    // Build timezone pills for header
+    let pills = '';
+    if (cstStores.length) pills += `<span class="tz-pill cst">CST ×${cstStores.length}</span>`;
+    if (estStores.length) pills += `<span class="tz-pill est">EST ×${estStores.length}</span>`;
+
+    html += `<div class="vdm-section">
+      <div class="vdm-header" onclick="toggleVDM(this)">
+        <div class="vdm-avatar">${initials(vdm)}</div>
+        <div>
+          <div class="vdm-name">${vdm}</div>
+          <div class="vdm-count">${stores.length} store${stores.length>1?'s':''} total</div>
+        </div>
+        <div class="vdm-tz-pills">${pills}</div>
+        <span class="vdm-chevron">▾</span>
+      </div>
+      <div class="vdm-body">`;
+
+    if (hasBoth) {
+      // CST sub-section
+      html += `<div class="vdm-tz-block">
+        <div class="vdm-tz-label cst">🟠 CST — Central Time &nbsp;|&nbsp; Mon–Sat 10AM–8PM · Sun 12PM–6PM</div>
+        <div class="vdm-stores">${cstStores.map(storeCard).join('')}</div>
+      </div>
+      <div class="vdm-tz-divider"></div>
+      <div class="vdm-tz-block">
+        <div class="vdm-tz-label est">🔵 EST — Eastern Time &nbsp;|&nbsp; Mon–Sat 10AM–8PM · Sun 12PM–6:30PM</div>
+        <div class="vdm-stores">${estStores.map(storeCard).join('')}</div>
+      </div>`;
+    } else {
+      const tz = cstStores.length ? 'CST' : 'EST';
+      const label = tz==='CST'
+        ? '🟠 CST — Central Time &nbsp;|&nbsp; Mon–Sat 10AM–8PM · Sun 12PM–6PM'
+        : '🔵 EST — Eastern Time &nbsp;|&nbsp; Mon–Sat 10AM–8PM · Sun 12PM–6:30PM';
+      html += `<div class="vdm-tz-block">
+        <div class="vdm-tz-label ${tz.toLowerCase()}">${label}</div>
+        <div class="vdm-stores">${stores.map(storeCard).join('')}</div>
+      </div>`;
+    }
+
+    html += `</div></div>`;
+  });
+
+  dir.innerHTML = html || '<div style="text-align:center;padding:60px;color:var(--muted)">No stores found</div>';
+}
+
+function toggleVDM(el) {
+  el.parentElement.classList.toggle('collapsed');
+}
+function setFilter(f) {
+  currentFilter = f;
+  ['all','cst','est'].forEach(id => {
+    const b = document.getElementById('btn-'+id);
+    if(b) b.classList.toggle('active', id===f.toLowerCase());
+  });
+  renderDirectory();
+}
+function filterStores() {
+  currentSearch = document.getElementById('search').value;
+  renderDirectory();
+}
+
+renderDirectory();
+
+// VIEW SWITCHING
+let mapInitialized = false;
+let leafletMap, markers = [];
+
+function showView(v) {
+  document.querySelectorAll('.nav-tab').forEach((t,i)=>t.classList.toggle('active',i===(v==='list'?0:1)));
+  document.getElementById('list-view').classList.toggle('hidden', v!=='list');
+  document.getElementById('map-view').classList.toggle('active', v==='map');
+  if(v==='map' && !mapInitialized) initMap();
+}
+
+function initMap() {
+  mapInitialized = true;
+  leafletMap = L.map('map', {center:[32.5,-90],zoom:5});
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+    attribution:'&copy; OpenStreetMap &copy; CartoDB',maxZoom:19
+  }).addTo(leafletMap);
+
+  const mapList = document.getElementById('map-list');
+  mapList.innerHTML = '';
+  markers = [];
+
+  // Geocode via Nominatim
+  async function geocodeAndAdd(store, idx) {
+    const q = encodeURIComponent(`${store['Store Address']}, ${store.City}, ${store.State} ${store.Zip}`);
+    try {
+      const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`,
+        {headers:{'User-Agent':'VantedgeBoostDirectory/1.0'}});
+      const data = await r.json();
+      if(data && data[0]) {
+        const lat = parseFloat(data[0].lat), lon = parseFloat(data[0].lon);
+        const color = store.tz==='EST'?'#00B4D8':'#F77F00';
+        const icon = L.divIcon({className:'',html:`<div style="width:16px;height:16px;background:${color};border-radius:50%;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.5)"></div>`,iconSize:[16,16],iconAnchor:[8,8]});
+        const m = L.marker([lat,lon],{icon}).addTo(leafletMap);
+        m.bindPopup(`<b style="color:#FF6B00">#${store['Door ID']}</b><br><b>${store['Store Address']}</b><br>${store.City}, ${store.State} ${store.Zip}<br><small>${store['Store Phone Number']}</small><br><small style="color:#888">${store.VDM} · ${store.tz}</small>`);
+        markers.push({id:store['Door ID'],marker:m});
+
+        const item = document.createElement('div');
+        item.className='map-store-item';
+        item.innerHTML=`<div class="msaddr">#${store['Door ID']} ${store['Store Address']}</div><div class="mscity">${store.City}, ${store.State} · <span style="color:${color}">${store.tz}</span></div>`;
+        item.onclick=()=>{leafletMap.setView([lat,lon],15);m.openPopup()};
+        mapList.appendChild(item);
+      }
+    } catch(e){}
+    await new Promise(r=>setTimeout(r,300)); // rate limit
+  }
+
+  (async()=>{
+    for(let i=0;i<STORES.length;i++) await geocodeAndAdd(STORES[i],i);
+  })();
+}
+
+function focusMapStore(doorId) {
+  showView('map');
+  const found = markers.find(m=>m.id==doorId);
+  if(found) { leafletMap.setView(found.marker.getLatLng(),15); found.marker.openPopup(); }
+}
+</script>
+</body>
+</html>
