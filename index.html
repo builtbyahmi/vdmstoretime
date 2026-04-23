@@ -35,20 +35,20 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .nav-tab.active{background:var(--orange);border-color:var(--orange);color:#fff}
 
 /* HERO */
-.hero{background:linear-gradient(135deg,rgba(255,107,0,.15) 0%,rgba(123,47,190,.1) 100%);border-bottom:1px solid var(--border);padding:28px 24px}
-.hero-inner{max-width:1600px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
-.hero-title{font-size:28px;font-weight:900;background:linear-gradient(90deg,#fff 0%,var(--orange) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero-sub{color:var(--muted);font-size:14px;margin-top:4px}
-.stats{display:flex;gap:12px;flex-wrap:wrap}
-.stat{background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:12px 20px;text-align:center}
-.stat-num{font-size:22px;font-weight:800;color:var(--orange)}
-.stat-lbl{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.5px;margin-top:2px}
+.hero{background:linear-gradient(135deg,rgba(255,107,0,.1) 0%,rgba(123,47,190,.06) 100%);border-bottom:1px solid var(--border);padding:16px 24px}
+.hero-inner{max-width:1600px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.hero-title{font-size:22px;font-weight:900;background:linear-gradient(90deg,#fff 0%,var(--orange) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{color:var(--muted);font-size:12px;margin-top:3px}
+.stats{display:flex;gap:8px;flex-wrap:wrap}
+.stat{background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:8px 16px;text-align:center}
+.stat-num{font-size:18px;font-weight:800;color:var(--orange)}
+.stat-lbl{font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.5px;margin-top:1px}
 
 /* SEARCH */
-.search-bar{max-width:1600px;margin:20px auto;padding:0 24px;display:flex;gap:10px;align-items:center}
-.search-input{flex:1;background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:10px 16px;color:var(--text);font-size:14px;outline:none;transition:.2s}
-.search-input:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,107,0,.15)}
-.filter-btn{padding:10px 16px;border-radius:10px;border:1px solid var(--border2);background:var(--card);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;transition:.2s;white-space:nowrap}
+.search-bar{max-width:1600px;margin:12px auto;padding:0 24px;display:flex;gap:8px;align-items:center}
+.search-input{flex:1;background:var(--card);border:1px solid var(--border2);border-radius:9px;padding:8px 14px;color:var(--text);font-size:13px;outline:none;transition:.2s}
+.search-input:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,107,0,.12)}
+.filter-btn{padding:8px 14px;border-radius:9px;border:1px solid var(--border2);background:var(--card);color:var(--text);font-size:12px;font-weight:700;cursor:pointer;transition:.2s;white-space:nowrap}
 .filter-btn.active{background:var(--orange);border-color:var(--orange);color:#fff}
 
 /* TZ SECTION */
@@ -63,31 +63,41 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .tz-hours{font-size:12px;color:var(--muted);margin-left:auto}
 
 /* VDM SECTION */
-.vdm-section{margin-bottom:24px}
-.vdm-header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card2);border:1px solid var(--border2);border-radius:12px 12px 0 0;cursor:pointer;transition:.2s}
-.vdm-header:hover{border-color:var(--orange);background:rgba(255,107,0,.08)}
-.vdm-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--orange),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex-shrink:0}
-.vdm-name{font-size:15px;font-weight:700}
-.vdm-count{font-size:12px;color:var(--muted)}
-.vdm-chevron{margin-left:auto;font-size:16px;transition:.3s;color:var(--muted)}
-.vdm-stores{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;padding:12px;background:var(--bg2);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px}
+.vdm-section{margin-bottom:10px}
+.vdm-header{display:flex;align-items:center;gap:10px;padding:9px 13px;background:var(--card2);border:1px solid var(--border2);border-radius:10px 10px 0 0;cursor:pointer;transition:.2s}
+.vdm-header:hover{border-color:var(--orange);background:rgba(255,107,0,.07)}
+.vdm-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--orange),var(--purple));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0}
+.vdm-name{font-size:13px;font-weight:700}
+.vdm-count{font-size:11px;color:var(--muted)}
+.vdm-tz-pills{display:flex;gap:4px;margin-left:auto;margin-right:6px}
+.tz-pill{padding:2px 7px;border-radius:20px;font-size:9px;font-weight:800;letter-spacing:.4px}
+.tz-pill.cst{background:rgba(247,127,0,.12);color:var(--cst);border:1px solid rgba(247,127,0,.3)}
+.tz-pill.est{background:rgba(0,180,216,.12);color:var(--est);border:1px solid rgba(0,180,216,.3)}
+.vdm-chevron{font-size:12px;transition:.3s;color:var(--muted)}
+.vdm-body{background:var(--bg2);border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;overflow:hidden}
+.vdm-tz-block{padding:8px}
+.vdm-tz-label{display:flex;align-items:center;gap:6px;padding:4px 8px;margin-bottom:6px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:.4px}
+.vdm-tz-label.cst{background:rgba(247,127,0,.07);border:1px solid rgba(247,127,0,.18);color:var(--cst)}
+.vdm-tz-label.est{background:rgba(0,180,216,.07);border:1px solid rgba(0,180,216,.18);color:var(--est)}
+.vdm-tz-divider{height:1px;background:var(--border2);margin:4px 0}
+.vdm-stores{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:7px}
 
-/* STORE CARD */
-.store-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;transition:.25s;position:relative;overflow:hidden}
-.store-card:hover{border-color:var(--orange);transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,107,0,.15)}
+/* STORE CARD — compact */
+.store-card{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:10px 12px;transition:.2s;position:relative;overflow:hidden;cursor:pointer}
+.store-card:hover{border-color:var(--orange);box-shadow:0 4px 18px rgba(255,107,0,.12);transform:translateY(-1px)}
 .store-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--orange),var(--orange2))}
-.store-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px}
-.door-id{font-size:11px;font-weight:800;color:var(--orange);letter-spacing:.5px;background:rgba(255,107,0,.1);padding:3px 8px;border-radius:6px;border:1px solid rgba(255,107,0,.2)}
-.door-status{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px}
+.store-card.est-card::before{background:linear-gradient(90deg,var(--est),#0077A8)}
+.store-top{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:5px}
+.door-id{font-size:10px;font-weight:800;color:var(--orange);background:rgba(255,107,0,.1);padding:2px 7px;border-radius:5px;border:1px solid rgba(255,107,0,.2)}
+.door-status{font-size:9px;font-weight:700;padding:2px 6px;border-radius:5px}
 .door-status.open{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.2)}
 .door-status.closed{background:rgba(255,82,82,.1);color:var(--red);border:1px solid rgba(255,82,82,.2)}
-.store-address{font-size:14px;font-weight:600;margin-bottom:4px;line-height:1.4}
-.store-city{font-size:12px;color:var(--muted);margin-bottom:10px}
-.store-meta{display:flex;flex-direction:column;gap:5px}
-.meta-row{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
-.meta-row span:first-child{font-size:13px}
-.meta-val{color:var(--text);font-weight:500}
-.dm-tag{margin-top:8px;padding:6px 10px;background:rgba(123,47,190,.1);border:1px solid rgba(123,47,190,.2);border-radius:8px;font-size:11px;color:#B39DDB;font-weight:600}
+.store-address{font-size:12px;font-weight:600;line-height:1.3;margin-bottom:1px}
+.store-city{font-size:11px;color:var(--muted);margin-bottom:6px}
+.store-meta{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.meta-row{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--muted)}
+.meta-val{color:var(--text);font-weight:600;font-size:10px}
+.dm-row{margin-top:5px;font-size:10px;color:#B39DDB;font-weight:600;padding:3px 7px;background:rgba(123,47,190,.1);border:1px solid rgba(123,47,190,.2);border-radius:5px;display:inline-block}
 
 /* MAP VIEW */
 #map-view{display:none;height:calc(100vh - 64px);flex-direction:column}
@@ -104,7 +114,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 /* HIDDEN */
 .list-view{display:block}
 .list-view.hidden{display:none}
-.collapsed .vdm-stores{display:none}
+.collapsed .vdm-body{display:none}
 .collapsed .vdm-chevron{transform:rotate(-90deg)}
 
 @media(max-width:768px){
@@ -226,18 +236,20 @@ function initials(name) {
 function storeCard(s) {
   const st = s['Door Status']||'Open';
   const stClass = st.toLowerCase()==='open'?'open':'closed';
-  return `<div class="store-card" onclick="focusMapStore(${s['Door ID']})">
+  const tzCls = s.tz==='EST'?'est-card':'';
+  const hrs = s.tz==='EST'?'10A–8P · Sun 12–6:30P':'10A–8P · Sun 12–6P';
+  return `<div class="store-card ${tzCls}" onclick="focusMapStore(${s['Door ID']})">
     <div class="store-top">
-      <span class="door-id">🚪 Door #${s['Door ID']}</span>
+      <span class="door-id">#${s['Door ID']}</span>
       <span class="door-status ${stClass}">${st.toUpperCase()}</span>
     </div>
-    <div class="store-address">📍 ${s['Store Address']}</div>
+    <div class="store-address">${s['Store Address']}</div>
     <div class="store-city">${s.City}, ${s.State} ${s.Zip}</div>
     <div class="store-meta">
       <div class="meta-row"><span>📞</span><span class="meta-val">${s['Store Phone Number']}</span></div>
-      <div class="meta-row"><span>🕐</span><span class="meta-val">${s.hours}</span></div>
+      <div class="meta-row"><span>🕐</span><span class="meta-val">${hrs}</span></div>
     </div>
-    <div class="dm-tag">👔 DM: ${s['District Manager']}</div>
+    <div class="dm-row">👔 ${s['District Manager']}</div>
   </div>`;
 }
 
